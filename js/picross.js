@@ -3,7 +3,7 @@ window.onerror = (e) => {alert(e);};
 $(function() {
 
 	// localStorage save format versioning
-	var saveVersion = '2019.08.03';
+	var saveVersion = '2025.05.29';
 
 	var touchSupport = true;
 
@@ -667,7 +667,13 @@ $(function() {
 
         designerExport: function(e) {
             let state = btoa(JSON.stringify(this.model.get('state')));
-            alert(`Code:\n${state}`);
+		    const type = "text/plain";
+            const clipboardItemData = {
+              [type]: state,
+            };
+            const clipboardItem = new ClipboardItem(clipboardItemData);
+            navigator.clipboard.write([clipboardItem]);
+            alert(`Code written to clipboard`);
         },
 
         designerImport: function(e) {
