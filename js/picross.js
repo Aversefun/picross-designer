@@ -668,11 +668,7 @@ $(function() {
         designerExport: function(e) {
             let state = btoa(JSON.stringify(this.model.get('state')));
 		    const type = "text/plain";
-            const clipboardItemData = {
-              [type]: state,
-            };
-            const clipboardItem = new ClipboardItem(clipboardItemData);
-            navigator.clipboard.write([clipboardItem]);
+            navigator.clipboard.writeText(state);
             alert(`Code written to clipboard`);
         },
 
