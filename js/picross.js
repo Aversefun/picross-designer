@@ -357,8 +357,8 @@ $(function() {
 				return {
 					"click #new": "newGame",
 					"click #solve": "solve",
-                    "click #designer-export": "exportDesign",
-                    "click #designer-import": "importDesign",
+                    "click #designer-export": "designerExport",
+                    "click #designer-import": "designerImport",
 					"change #dark": "changeDarkMode",
 					"change #easy": "changeEasyMode",
                     "change #designer": "changeDesignerMode",
@@ -378,8 +378,8 @@ $(function() {
 				return {
 					"click #new": "newGame",
 					"click #solve": "solve",
-                    "click #designer-export": "exportDesign",
-                    "click #designer-import": "importDesign",
+                    "click #designer-export": "designerExport",
+                    "click #designer-import": "designerImport",
 					"change #dark": "changeDarkMode",
 					"change #easy": "changeEasyMode",
                     "change #designer": "changeDesignerMode",
