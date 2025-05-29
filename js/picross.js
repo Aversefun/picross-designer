@@ -696,7 +696,7 @@ $(function() {
 				hintsX: hintsX,
 				hintsY: hintsY,
 				guessed: 0,
-				total: total,
+				total: total*2,
 				complete: false,
 				perfect: false,
 				seed: seed
