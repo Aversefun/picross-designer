@@ -211,7 +211,7 @@ $(function() {
     				}
     			}
             } else {
-                state[x][y] = 2;
+                state[x][y] = guess;
             }
 
 			this.set({
@@ -662,12 +662,12 @@ $(function() {
 		},
 
         designerExport: function(e) {
-            let state = btoa(this.model.get('state'));
+            let state = btoa(JSON.stringify(this.model.get('state')));
             alert(`Code:\n${state}`);
         },
 
         designerImport: function(e) {
-            let solution = atob(prompt("Enter code:"));
+            let solution = JSON.parse(atob(prompt("Enter code:")));
             let state = [];
     
             for(var i = 0; i < this.model.get('dimensionHeight'); i++) {
