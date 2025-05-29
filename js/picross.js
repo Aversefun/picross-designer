@@ -1,3 +1,5 @@
+window.onerror = (e) => {alert(e);};
+
 $(function() {
 
 	// localStorage save format versioning
