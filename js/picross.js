@@ -20,7 +20,8 @@ $(function() {
 				perfect: false,
 				seed: 0,
 				darkMode: false,
-				easyMode: true	// show crossouts
+				easyMode: true,	// show crossouts
+				designer: false,
 			};
 		},
 
