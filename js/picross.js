@@ -675,11 +675,14 @@ $(function() {
         designerImport: function(e) {
             let solution = JSON.parse(atob(prompt("Enter code:")));
             let state = [];
+	        let total = 0;
     
             for(var i = 0; i < this.model.get('dimensionHeight'); i++) {
                 state[i] = [];
                 for(var j = 0; j < this.model.get('dimensionWidth'); j++) {
                     state[i][j] = 0;
+                    total += solution[i][j];
+                    solution[i][j] = solution[i][j] += 1;
                 }
             }
 
