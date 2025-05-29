@@ -677,9 +677,9 @@ $(function() {
             let state = [];
 	        let total = 0;
     
-            for(var i = 0; i < solution.length; i++) {
+            for(var i = 0; i < this.model.get('dimensionHeight'); i++) {
                 state[i] = [];
-                for(var j = 0; j < solution[0].length; j++) {
+                for(var j = 0; j < this.model.get('dimensionWidth'); j++) {
                     state[i][j] = 0;
                     total += solution[i][j];
                     solution[i][j] = solution[i][j] += 1;
