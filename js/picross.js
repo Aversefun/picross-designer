@@ -211,7 +211,11 @@ $(function() {
     				}
     			}
             } else {
-                state[x][y] = guess;
+	                if(state[x][y] === guess) {
+				state[x][y] = 0;
+			} else {
+				state[x][y] = guess;
+			}
             }
 
 			this.set({
