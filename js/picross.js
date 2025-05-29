@@ -45,6 +45,7 @@ $(function() {
 				localStorage['picross2.seed'] = JSON.stringify(this.get('seed'));
 				localStorage['picross2.darkMode'] = JSON.stringify(this.get('darkMode'));
 				localStorage['picross2.easyMode'] = JSON.stringify(this.get('easyMode'));
+				localStorage['picross2.designer'] = JSON.stringify(this.get('designer'));
 			}
 		},
 
@@ -67,6 +68,7 @@ $(function() {
 				var seed = JSON.parse(localStorage['picross2.seed']);
 				var darkMode = JSON.parse(localStorage['picross2.darkMode']);
 				var easyMode = JSON.parse(localStorage['picross2.easyMode']);
+				var designer = JSON.parse(localStorage['picross2.designer']);
 
 				this.set({
 					dimensionWidth: dimensionWidth,
@@ -80,7 +82,8 @@ $(function() {
 					perfect: perfect,
 					seed: seed,
 					darkMode: darkMode,
-					easyMode: easyMode
+					easyMode: easyMode,
+					designer: designer,
 				});
 			} catch(e) {
 				this.reset();
@@ -88,29 +91,43 @@ $(function() {
 		},
 
 		reset: function(customSeed) {
-			var seed = customSeed;
-			if(seed === undefined) {
-				seed = '' + new Date().getTime();
-			}
-			Math.seedrandom(seed);
+            var state = [];
 
-			var solution = [];
-			var state = [];
-			var total = 0;
+            for(var i = 0; i < this.get('dimensionHeight'); i++) {
+                state[i] = [];
+                for(var j = 0; j < this.get('dimensionWidth'); j++) {
+                    state[i][j] = 0;
+                }
+            }
 
-			for(var i = 0; i < this.get('dimensionHeight'); i++) {
-				solution[i] = [];
-				state[i] = [];
-				for(var j = 0; j < this.get('dimensionWidth'); j++) {
-					var random = Math.ceil(Math.random() * 2);
-					solution[i][j] = random;
-					total += (random - 1);
-					state[i][j] = 0;
-				}
-			}
-
-			var hintsX = this.getHintsX(solution);
-			var hintsY = this.getHintsY(solution);
+            var hintsX = this.getHintsX(state);
+            var hintsY = this.getHintsY(state);
+            
+            if (!this.get('designer')) {
+    			var seed = customSeed;
+    			if(seed === undefined) {
+    				seed = '' + new Date().getTime();
+    			}
+    			Math.seedrandom(seed);
+    
+    			var solution = [];
+    			state = [];
+    			var total = 0;
+    
+    			for(var i = 0; i < this.get('dimensionHeight'); i++) {
+    				solution[i] = [];
+    				state[i] = [];
+    				for(var j = 0; j < this.get('dimensionWidth'); j++) {
+    					var random = Math.ceil(Math.random() * 2);
+    					solution[i][j] = random;
+    					total += (random - 1);
+    					state[i][j] = 0;
+    				}
+    			}
+    
+    			hintsX = this.getHintsX(solution);
+    			hintsY = this.getHintsY(solution);
+            }
 
 			this.set({
 				state: state,
@@ -178,25 +195,31 @@ $(function() {
 			var state = this.get('state');
 			var guessed = this.get('guessed');
 
-			if(state[x][y] === 2) {
-				guessed--;
-			}
-
-			if(state[x][y] === guess) {
-				state[x][y] = 0;
-			} else {
-				state[x][y] = guess;
-				if(guess === 2) {
-					guessed++;
-				}
-			}
+            if (!this.get('designer')) {
+    			if(state[x][y] === 2) {
+    				guessed--;
+    			}
+    
+    			if(state[x][y] === guess) {
+    				state[x][y] = 0;
+    			} else {
+    				state[x][y] = guess;
+    				if(guess === 2) {
+    					guessed++;
+    				}
+    			}
+            } else {
+                state[x][y] = 2;
+            }
 
 			this.set({
 				state: state,
 				guessed: guessed
 			});
 
-			this.updateCrossouts(state, x, y);
+            if (!this.get('designer')) {
+			    this.updateCrossouts(state, x, y);
+            }
 
 			// trigger the change event manually since in-place array updates aren't considered changes
 			this.trigger('change');
@@ -283,6 +306,9 @@ $(function() {
 		},
 
 		isPerfect: function() {
+            if (this.get('designer')) {
+                return true;
+            }
 			var perfect = true;
 			var state = this.get('state');
 			var hintsX = this.get('hintsX');
@@ -331,6 +357,7 @@ $(function() {
 					"click #solve": "solve",
 					"change #dark": "changeDarkMode",
 					"change #easy": "changeEasyMode",
+                    "change #designer": "changeDesignerMode",
 					"mousedown": "clickStart",
 					"mouseover td.cell": "mouseOver",
 					"mouseout td.cell": "mouseOut",
@@ -349,6 +376,7 @@ $(function() {
 					"click #solve": "solve",
 					"change #dark": "changeDarkMode",
 					"change #easy": "changeEasyMode",
+                    "change #designer": "changeDesignerMode",
 					"mousedown": "clickStart",
 					"mouseover td.cell": "mouseOver",
 					"mouseout td.cell": "mouseOut",
@@ -381,6 +409,11 @@ $(function() {
 			} else {
 				$('#easy').removeAttr('checked');
 			}
+            if(this.model.get('designer')) {
+                $('#designer').attr('checked', 'checked');
+            } else {
+                $('#designer').removeAttr('checked');
+            }
 			this.render();
 		},
 
@@ -393,6 +426,11 @@ $(function() {
 			var easyMode = $('#easy').attr('checked') !== undefined;
 			this.model.set({easyMode: easyMode});
 		},
+
+        changeDesignerMode: function(e) {
+            var designer = $('#designer').attr('checked') !== undefined;
+			this.model.set({designer: designer});
+        },
 
 		changeDimensions: function(e) {
 			var dimensions = $('#dimensions').val();
@@ -623,8 +661,9 @@ $(function() {
 
 			var guessed = this.model.get('guessed');
 			var total = this.model.get('total');
+            
 			var progress = this.model.get('guessed') / this.model.get('total') * 100;
-			if (guessed === 0 && total === 0) {
+			if (guessed === 0 && total === 0 || this.model.get('progress')) {
 				progress = 100;
 			}
 			$('#progress').text(progress.toFixed(1) + '%');
