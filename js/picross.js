@@ -355,6 +355,8 @@ $(function() {
 				return {
 					"click #new": "newGame",
 					"click #solve": "solve",
+                    "click #designer-export": "exportDesign",
+                    "click #designer-import": "importDesign",
 					"change #dark": "changeDarkMode",
 					"change #easy": "changeEasyMode",
                     "change #designer": "changeDesignerMode",
@@ -374,6 +376,8 @@ $(function() {
 				return {
 					"click #new": "newGame",
 					"click #solve": "solve",
+                    "click #designer-export": "exportDesign",
+                    "click #designer-import": "importDesign",
 					"change #dark": "changeDarkMode",
 					"change #easy": "changeEasyMode",
                     "change #designer": "changeDesignerMode",
@@ -654,6 +658,39 @@ $(function() {
 				perfect: perfect,
 			});
 		},
+
+        designerExport: function(e) {
+            let state = btoa(this.model.get('state'));
+            alert(`Code:\n${state}`);
+        },
+
+        designerImport: function(e) {
+            let solution = atob(prompt("Enter code:"));
+            let state = [];
+    
+            for(var i = 0; i < this.model.get('dimensionHeight'); i++) {
+                state[i] = [];
+                for(var j = 0; j < this.model.get('dimensionWidth'); j++) {
+                    state[i][j] = 0;
+                }
+            }
+
+            var hintsX = this.model.getHintsX(solution);
+            var hintsY = this.model.getHintsY(solution);
+
+			this.model.set({
+                dimensionWidth: hintsX.length,
+                dimensionHeight: hintsY.length,
+				state: state,
+				hintsX: hintsX,
+				hintsY: hintsY,
+				guessed: 0,
+				total: total,
+				complete: false,
+				perfect: false,
+				seed: seed
+			});
+        },
 
 		render: function() {
 			var seed = this.model.get('seed');
